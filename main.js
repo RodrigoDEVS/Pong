@@ -25,17 +25,21 @@
         this.width = width;
         this.height = height;
         this.board = board;
-
-        //agregar el objeto al arreglo bars[]
-        this.board.bars.push(this)
+        this.board.bars.push(this) //agregar el objeto al arreglo bars[]
         this.kind = "rectangle";
+        this.speed = 10; //velocidad base con la que se mueven las barras
     }
+
+    //Metodos para mover las barras
     self.Bar.prototype = {
         down: function(){
-
+            this.y += this.speed; //cambiar la velocidad con la que se mueven las barras
         },
         up: function(){
-
+            this.y -= this.speed; //cambiar la velocidad con la que se mueven las barras
+        },
+        toString: function(){
+            return "x: " + this.x + " y: " + this.y;
         }
     }
 })();
@@ -71,14 +75,25 @@
     }
 })();
 
-window.addEventListener("load", main);
+var board = new Board(800, 400);
+var bar = new Bar(20,100,40, 100, board)
+var bar = new Bar(735,100,40, 100, board)
+var canvas = document.getElementById('canvas');
+var board_view = new BoardView(canvas, board);
+
+//Evento para dar movimiento a las barras de acuerdo a las teclas presionadas
+document.addEventListener("keydown", function(ev){
+    if(ev.keyCode == 38){
+        bar.up();
+    }
+    else if(ev.keyCode == 40){
+        bar.down();
+    }
+})
+
+self.addEventListener("load", main);
 
 //Controlador
 function main(){
-    var board = new Board(800, 400);
-    var bar = new Bar(20,100,40, 100, board)
-    var bar = new Bar(735,100,40, 100, board)
-    var canvas = document.getElementById('canvas');
-    var board_view = new BoardView(canvas, board);
     board_view.draw();
 }
