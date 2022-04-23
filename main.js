@@ -7,11 +7,12 @@
         this.game_over = false;
         this.bars = [];
         this.ball = null;
+        this.playing = false;
     }
 
     self.Board.prototype = {
         get elements(){
-            var elements = this.bars;
+            var elements = this.bars.map(function(bar){return bar});
             elements.push(this.ball);
             return elements;
         }
@@ -27,9 +28,17 @@
         this.speed_y = 0;
         this.speed_x = 3;
         this.board = board;
+        this.direction = 1;
 
         board.ball = this;
         this.kind = "circle";
+    }
+    //función para que la pelota se mueva
+    self.Ball.prototype = {
+        move: function(){
+            this.x += (this.speed_x * this.direction);
+            this.y += (this.speed_y * this.direction);
+        }
     }
 })();
 
@@ -81,8 +90,11 @@
             }
         },
         play: function(){
-            this.clean();
-            this.draw();
+            if(this.board.playing){
+                this.clean();
+                this.draw();
+                this.board.ball.move()
+            }
         }
     }
 
@@ -110,8 +122,9 @@ var ball = new Ball(350, 100, 10, board);
 
 //Evento para dar movimiento a las barras de acuerdo a las teclas presionadas
 document.addEventListener("keydown", function(ev){
-    ev.preventDefault();
+    
     if(ev.keyCode == 38){
+        ev.preventDefault();
         //Flecha arriba
         bar.up();
     }
@@ -124,12 +137,19 @@ document.addEventListener("keydown", function(ev){
     }else if(ev.keyCode == 83){
         //s
         bar_2.down();
+    }else if(ev.keyCode === 32){
+        ev.preventDefault();
+        board.playing = !board.playing;
     }
+});
 
-    console.log(""+bar_2)
-})
-
+board_view.draw();
 window.requestAnimationFrame(controller);
+
+//cambiar la bola de dirección
+setTimeout(function(){
+    ball.direction = -1;
+}, 3000);
 
 //Controlador
 function controller(){
